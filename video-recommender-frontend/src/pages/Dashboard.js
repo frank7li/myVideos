@@ -1,5 +1,5 @@
 import React from 'react';
-import UploadVideo from '../components/UploadVideo';
+import UploadVideo from '../components/UploadVideos';
 import Recommendations from '../components/Recommendations';
 import Logout from '../components/Logout';
 
@@ -15,3 +15,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+

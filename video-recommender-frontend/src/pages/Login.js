@@ -1,20 +1,20 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setAuthTokens } = useContext(AuthContext);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('/api/login', { email, password });
       setAuthTokens(response.data.access_token);
-      history.push('/dashboard');
+      navigate('/dashboard');
     } catch (error) {
       console.error(error);
       alert('Invalid email or password');
@@ -35,7 +35,7 @@ function Login() {
         </div><br />
         <button type="submit">Login</button>
         <p>
-          Don't have an account? <a href="/register">Register here</a>
+          Don't have an account? <Link to="/register">Register here</Link>
         </p>
       </form>
     </div>

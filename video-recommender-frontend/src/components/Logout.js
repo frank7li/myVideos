@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../AuthContext';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Logout() {
   const { setAuthTokens } = useContext(AuthContext);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     setAuthTokens(null);
     localStorage.removeItem('tokens');
-    history.push('/login');
+    navigate('/login');
   };
 
   return <button onClick={handleLogout}>Logout</button>;

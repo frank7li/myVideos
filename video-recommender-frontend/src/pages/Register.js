@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post('/api/register', { email, password });
       alert('Registration successful! Please login.');
-      history.push('/login');
+      navigate('/login');
     } catch (error) {
       console.error(error);
       alert('Registration failed');
@@ -33,7 +33,7 @@ function Register() {
         </div><br />
         <button type="submit">Register</button>
         <p>
-          Already have an account? <a href="/login">Login here</a>
+          Already have an account? <Link to="/login">Login here</Link>
         </p>
       </form>
     </div>

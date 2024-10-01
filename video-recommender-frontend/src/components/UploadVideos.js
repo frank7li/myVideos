@@ -7,7 +7,7 @@ function UploadVideo() {
   const { authTokens } = useContext(AuthContext);
 
   const handleFileChange = (e) => {
-    setVideoFile(e.target.files[0]);
+    setVideoFile(e.target.files[0]); 
   };
 
   const handleUpload = async () => {
