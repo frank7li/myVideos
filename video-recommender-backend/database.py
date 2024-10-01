@@ -3,12 +3,19 @@
 from flask_pymongo import PyMongo
 from gridfs import GridFS
 
-mongo = PyMongo()
-db = mongo.db
-grid_fs = None
+class Database:
+    def __init__(self):
+        self.mongo = PyMongo()
+        self.db = None
+        self.grid_fs = None
+
+    def init_app(self, app):
+        self.mongo.init_app(app)
+        self.db = self.mongo.db
+        self.grid_fs = GridFS(self.db)
+
+db = Database()
 
 def init_db(app):
-    mongo.init_app(app)
-    global db, grid_fs
-    db = mongo.db
-    grid_fs = GridFS(db)
+    db.init_app(app)
+    return db

@@ -2,11 +2,11 @@
 
 from flask import Flask, request, jsonify
 import numpy as np
-from models.ranking_model import RankingModel  # Import your actual model class
+from models.ranking_model import RankingModel 
 
 app = Flask(__name__)
 
-# Load your model
+# Load the model
 model = RankingModel()
 
 @app.route('/predict', methods=['POST'])

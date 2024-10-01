@@ -8,10 +8,9 @@ import os
 from bson.objectid import ObjectId
 
 @celery.task
-def process_video_task(filename, video_id, user_id):
-    from app import app  # Import within the function to avoid circular import
+def process_video_task(filename, video_id, user_id, upload_folder, s3_bucket):
     # Path to the uploaded video
-    video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    video_path = os.path.join(upload_folder, filename)
 
     # Step 1: Extract Features
     features = extract_features(video_path)

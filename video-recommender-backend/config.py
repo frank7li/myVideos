@@ -1,14 +1,28 @@
 # config.py
 
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
-    MONGO_URI = os.environ.get('MONGO_URI') or 'mongodb+srv://<username>:<password>@cluster0.mongodb.net/mydatabase?retryWrites=true&w=majority'
-    S3_BUCKET = os.environ.get('S3_BUCKET') or 'your-s3-bucket-name'
-    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-    AWS_REGION = os.environ.get('AWS_REGION') or 'your-region'
-    UPLOAD_FOLDER = 'uploads'
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your-jwt-secret-key'
-    REDIS_URL = os.environ.get('REDIS_URL') or 'redis://localhost:6379/0'
+    SECRET_KEY = os.environ['SECRET_KEY']
+    MONGO_URI = os.environ['MONGO_URI']
+    S3_BUCKET = os.environ['S3_BUCKET']
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_REGION = os.environ['AWS_REGION']
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'uploads')
+    JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
+    REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+
+    @classmethod
+    def validate(cls):
+        required_vars = [
+            'SECRET_KEY', 'MONGO_URI', 'S3_BUCKET', 'AWS_ACCESS_KEY_ID',
+            'AWS_SECRET_ACCESS_KEY', 'AWS_REGION', 'JWT_SECRET_KEY'
+        ]
+        missing = [var for var in required_vars if not os.environ.get(var)]
+        if missing:
+            raise ValueError(f"Missing required environment variables: {', '.join(missing)}")

@@ -9,6 +9,11 @@ import speech_recognition as sr
 import subprocess
 import tempfile
 import os
+import tensorflow as tf
+import tensorflow_hub as hub
+
+# Load the VGGish model 
+vggish_model = hub.load('https://tfhub.dev/google/vggish/1')
 
 def extract_features(video_path):
     # Extract visual features
@@ -50,7 +55,7 @@ def extract_visual_features(video_path):
         transforms.ToTensor()
     ])
     features = []
-    for frame in frames[::30]:  # Sample every 30 frames
+    for frame in frames[::60]:  # Sample every 60 frames
         input_tensor = transform(frame)
         input_batch = input_tensor.unsqueeze(0)
         with torch.no_grad():
@@ -61,6 +66,7 @@ def extract_visual_features(video_path):
     return visual_features.tolist()
 
 def extract_audio_features(video_path):
+    
     # Create a temporary file for the audio
     with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_audio_file:
         audio_path = temp_audio_file.name
@@ -114,7 +120,27 @@ def extract_text_features(video_path):
     return text_features.tolist()
 
 def extract_vggish_features(audio_path):
-    # Implement or import your VGGish feature extraction here
-    # This is a placeholder function
-    features = np.random.rand(128)  # Example feature vector
+    # Load and preprocess the audio file
+    wav_data, sample_rate = tf.audio.decode_wav(
+        tf.io.read_file(audio_path),
+        desired_channels=1,
+        desired_samples=16000,
+    )
+    
+    # Ensure the audio is the correct shape
+    wav_data = tf.squeeze(wav_data, axis=-1)
+    
+    # Get the spectrogram
+    spectrogram = tf.signal.stft(wav_data, frame_length=400, frame_step=160)
+    spectrogram = tf.abs(spectrogram)
+    
+    # Waveform to input features
+    input_features = vggish_model.preprocess(spectrogram)
+    
+    # Extract embeddings
+    embeddings = vggish_model(input_features)
+    
+    # Convert to numpy and take the mean across time
+    features = np.mean(embeddings.numpy(), axis=0)
+    
     return features.tolist()
