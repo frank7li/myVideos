@@ -12,16 +12,16 @@ def process_video_task(filename, video_id, user_id, upload_folder, s3_bucket):
     # Path to the uploaded video
     video_path = os.path.join(upload_folder, filename)
 
-    # Step 1: Extract Features
+    # Extract Features
     features = extract_features(video_path)
 
-    # Step 2: Store Features in Database
+    # Store Features in Database
     db.videos.update_one(
         {'_id': ObjectId(video_id)},
         {'$set': {'features': features}}
     )
 
-    # Step 3: Generate Embeddings
+    # Generate Embeddings
     generate_embeddings(video_id)
 
     # Optional: Update Recommendations

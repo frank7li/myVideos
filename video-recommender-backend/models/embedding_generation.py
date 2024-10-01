@@ -9,16 +9,15 @@ def generate_embeddings(video_id):
     video = mongo.db.videos.find_one({'_id': ObjectId(video_id)})
     features = video['features']
 
-    # Apply PCA to reduce dimensionality
-    pca_visual = PCA(n_components=50).fit_transform(np.array(features['visual']))
-    pca_audio = PCA(n_components=50).fit_transform(np.array(features['audio']))
-    pca_text = PCA(n_components=50).fit_transform(np.array(features['text']))
+    # Convert torch tensor to numpy array
+    features_np = features.cpu().numpy()
 
-    # Combine features into a single vector
-    combined_features = np.concatenate([pca_visual, pca_audio, pca_text])
+    # Apply PCA to reduce dimensionality from 512 to 128
+    pca = PCA(n_components=128)
+    reduced_features = pca.fit_transform(features_np.reshape(1, -1))
 
-    # Generate embedding (e.g., normalize)
-    embedding = normalize(combined_features.reshape(1, -1))[0]
+    # Normalize the reduced features
+    embedding = normalize(reduced_features)[0]
 
     # Store embedding in database
     mongo.db.videos.update_one(
